@@ -31,4 +31,4 @@ repository for details.
 ![Fourmilab Blobby Man Avatar](marketplace/images/blobby_12.png)
 
 Please see the
-![Fourmilab Blobby Man Avatar User Guide](notecards.nc) for details.
+[Fourmilab Blobby Man Avatar User Guide](notecards/blobby.nc) for details.
