@@ -1,0 +1,34 @@
+In 1987, computer graphics pioneer Jim Blinn published an article in which he introduced the “Blobby Man”, a humanoid mannequin built entirely from spheres, demonstrating the power of nested translation, rotation, and scaling operations to construct models from the simplest primitive objects.  Those whose early explorations of computer graphics and three-dimensional modeling involved the Blobby Man have a fondness for its funky but elegant structure and now, in Second Life, have the opportunity to actually become the Blobby Man when fancy mesh avatars become tiresome.
+
+The Fourmilab Blobby Man Avatar is inspired by, but not entirely compatible with, Blinn's original model (it has been adapted to conform to the “bones” of the Second Life standard avatar, allowing it to work well with poses and animations designed for that avatar).  In keeping with its retro look, the Blobby Man Avatar is built with retro-technology.  There isn't a mesh to be seen!  Instead, the Blobby Man Avatar is a collection of 21 attachments, each a single sphere prim, rotated and scaled appropriately, which are “worn” on the corresponding places of the Second Life avatar body.  To use the avatar, you simply select the folder containing its components (as well as a provided alpha mask that hides the standard avatar you're wearing and a shape file with the standard avatar shape), then select “Replace Current Outfit”.  Suddenly, it's 1987 again and you're the Blobby Man!  Go forth and amaze everybody with the power of simplicity.
+
+Two versions of the avatar are supplied.  The first is a simple, unscripted collection of attachments.  This version has no commands or configuration, and imposes an absolutely minimal load on the simulator.  A second version contains scripts which allow you to customise the avatar with commands sent from local chat, setting:
+
+    •  Colour (RGB, CSV, Random, or “Simpsons yellow”)
+    •  Transparency (fancy becoming the Invisible Man?)
+    •  Glow
+    •  Light source (light up the room when you walk in!)
+    •  Smooth colour changes, either independent by body part or uniformly
+
+A script facility allows automating these commands or setting up configurations when you wear the avatar.
+
+Land Impact and Permissions
+
+The Fourmilab Blobby Man Avatar is a collection of attachments you add to your avatar.  Avatar attachments do not count against land impact, nor do you need land in order to attach them from your inventory.  Hence, there are no land impact or permission issues in using this product.  The avatar consists of 21 sphere prims, each with a land impact of 1, but this would only count against the capacity of a parcel if you were to rez them rather than attach them to your avatar, as intended.
+
+This product includes only the avatar: the garments, accessories, and other objects shown in the illustrations are only to demonstrate its compatibility with other objects in Second Life.  They are available separately from their respective creators.
+
+Development Kit
+
+The Fourmilab Blobby Man Avatar is delivered including a development kit containing all of the object components, models, textures, scripts, sound clips, and documents used in the objects.  All items including scripts, have “full permissions” (copy, modify, and transfer), so that you can use them as the basis for your own development projects and/or share them with other users in Second Life.
+
+Source code for this project is maintained on and available from the GitHub repository:
+    https://github.com/Fourmilab/blobby_man_avatar
+
+License
+----------
+
+This product (software, documents, images, and original models) is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+    http://creativecommons.org/licenses/by-sa/4.0/
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+You are free to copy and redistribute this material in any medium or format, and to remix, transform, and build upon the material for any purpose, including commercially.  You must give credit, provide a link to the license, and indicate if changes were made.  If you remix, transform, or build upon this material, you must distribute your contributions under the same license as the original.

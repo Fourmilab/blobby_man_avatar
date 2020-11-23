@@ -1,0 +1,9 @@
+Humanoid mannequin avatar built entirely from sphere prims
+
+Inspired by Jim Blinn's Blobby Man model from 1987
+
+No mesh!  Built entirely from attachments
+
+Just 21 spheres: lightning-fast rendering
+
+Script allows configuring colours, transparency, glow, smooth colour transitions
