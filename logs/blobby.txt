@@ -1,0 +1,271 @@
+
+                        Blobby Man Avatar
+
+                         Development Log
+
+2020 November 15
+
+Created an all_clear.png 256x256 all transparent texture and imported
+it to create a "Fourmilab full body alpha mask" which hides the upper
+and lower body, head, hair, and eyes.  Added this to the items to be
+included when wearing the attachments.
+
+Created a "Blobby man shape" which can be used to adjust the shape
+of the avatar.  At the moment, it is 100% dedault values.
+
+Discovered that the reason animations wouldn't run is that the
+"Animation Overrider - Female" from the original standard avatar
+was included after adding the Blobby components.  When I took it
+off, the animations (tested with gestures) now worked correctly.
+
+Confirmed that animations also failed with the original standard
+avatar (Elizabeth) with the overrider in place.
+
+Creating the shape based upon the one from the standard avatar
+inherited the original Linden creator and its "No transfer" permission:
+fooey.  What you have to do is go to Inventory, then New Body Parts /
+New Shape, which creates a default shape with you as the creator.
+Another gotcha: despite your settings for new objects, the shape always
+get created with Modify only permissions: you must explicitly set
+Copy and Translate in order to create a full permissions shape to
+deliver to others.
+
+The same gotcha applies to user-created Alpha masks.  You have to
+manually set the permissions after creating it.
+
+Saving a shape to XML from Firestorm is exquisitely opaque.  Instead
+of something like "Export shape", you use Developer / Avatar /
+Character Tests / Appearance To XML, which saves a file with a
+screwball name like "Fourmilab_s_0000.xml".  This contains the
+<linden_genepool version="1.0"> XML which specifies the shape.
+The information output from Firestorm is much more extensive than
+that exported by the standard Second Life viewer.  It is claimed
+that Avastar on Blender can import either flavour.  This imports
+within the shape editor with no problems.
+
+Interestingly, replacing the shape inherited from the standard avatar
+with a brand new standard shape corrected all of the failures of joints
+to connect which we observed before.
+
+Added an Abdomen component attached to the Stomach joint and shrank
+the Body component on the Spine accordingly.  The Abdomen needs an
+offset to align with the spine, but dramatically improves the
+articulation in bending movements.
+
+2020 November 18
+
+Wasted a huge amount of time trying to forward commands read from a
+script by a master component other components attached to the same
+avatar.  It appears that, for some reason I cannot discern, messages
+sent from a component which is listening on a certain channel to the
+same channel are...wait for it...silently discarded.  I first thought
+this might be some kind of anti-recursion gimmick (which makes no
+sense, because a component which sends a message never receives it
+anyway), but then I recalled that Polychrome colour change commands
+sent on large negative channels do not have this problem.  I changed
+the code to piggyback the command forwarding on the colour change
+channel and it worked.  So, it appears there is some difference in the
+behaviour of positive and negative channel numbers, and I'll be darned
+to heck if I can find it documented anywhere.
+
+Renamed the Abdomen component "Stomach" so it's the same as the bone
+to which it is attached.  This makes it easier to remember and avoids
+confusion when looking at the "attached to" list in the inventory.
+
+2020 November 19
+
+Changed the definition of "*: " as a component designator in a script.
+Now, ": " causes the following command to be sent to all other
+components, while "*: " both runs the command locally and forwards it
+to other scripts.  This allows, for example, setting colour globally
+without setting it separately for the current component and others.
+
+Created a (currently inactive) Marketplace listing and populated with
+the directory structure intended for the product (but not final
+versions of the actual components).  Took and edited screenshots for
+the Marketplace page, wrote the content, and built a prototype of
+the listing.
+
+2020 November 20
+
+Defined the concept of the "primary component", defined as the one
+which contains the Script Processor.  The primary component is the only
+one to process the Script command (others silently ignore it), check
+for and load a configuration file, and deletes the Script Processor if
+the "Kill scripts" command is entered.
+
+It's time to return once again to the Valley of Confusion when it comes
+to the start-up process for attachments.  If you attach an object from
+the inventory, its script sees:
+    on_rez()
+    attach()
+but, you'll note, nary a state_entry() in sight.  Why?  Beats the
+babbling heck out of me.  But if you reset the script while it's
+attached, you see:
+    state_entry()
+but no attach() event: it's up to you to determine whether the object
+is attached or just lying on the ground (if this matters to you).  If
+you, as many script authors do, perform a llResetScript() in the
+on_rez() event, then your script will see:
+    on_rez()  [Where you llResetScript()]
+    state_entry()
+without an attach().  When you log in, your attachments are re-attached
+to the avatar, and you'll see the same sequence as if they were newly
+attached from the inventory.  Teleporting or crossing region boundaries
+creates no events (although the attachments are, in fact, teleported
+indepedently and re-attached, as if by a clumsy invisible hand wearing
+a mitten).
+
+It seems to me that the most straightforward way out of this mess is to
+continue to do what I was already doing before I sat down and teased
+out all of these details: llResetScript() in on_rez(), perform
+initialisation processing in the subsequent state_entry(), and use the
+attach() event only to detect detachment from an avatar (if we care).
+
+When processing a configuration script immediately after attaching the
+entire avatar component set from a folder, there was no guarantee that
+commands forwarded by the primary component wouldn't be sent before
+other components had completed initialisation and started to listen on
+bcChannel.  I added (sloppy, timer-based) logic to llSleep for ten
+seconds before forwarding the first configuration command to other
+components.
+
+2020 November 21
+
+Created local development Git repository in:
+    ~/w/SecondLife/BlobbyAvatar/git
+with:
+    git init
+
+Logged on to github.com.
+
+Created a new repository:
+    blobby_man_avatar
+with access URLs:
+    HTTPS: https://github.com/Fourmilab/blobby_man_avatar.git
+    SSH:   git@github.com:Fourmilab/blobby_man_avatar.git
+
+Linked the local repository to the GitHub archive:
+    git remote add origin git@github.com:Fourmilab/blobby_man_avatar.git
+
+Committed the *.md files in the repository root and the
+marketplace/images files to which they link.
+
+Confirmed that my local "git sync" command works with the remote
+repository.
+
+Commmitted a preliminary version of the User Guide notecard to test
+linking to it from the repository README.md file.
+
+The documents in the repository root now work properly.
+
+Revised how echoing of commands from chat and script works.  The "echo"
+flag is now on by default, but only echoes commands received and
+forwarded by the "primary" script (which, you'll recall, is the one in
+the component which has the Script Processor).  If "trace" is on,
+all components' scripts echo commands, regardless of the setting of
+echo.
+
+After far too many episodes of confusion due to mis-matched scripts in
+components, I added a version check facility to the main script. At the
+top of the script, you declare the version (which I define as the date
+and time in UTC), for example:
+    string version = "2020-11-21T20:28Z";
+The "Test version" command, which is processed only in the primary
+component (the others ignore it), sends a "VERSION" message on
+bcChannel with this string.  The other scripts, upon receiving this
+message, compare the version with the one compiled into them and report
+any discrepancies on local chat.  As long as you remember to deploy
+changes first to the primary component script and update the version,
+this will catch any failures to update other components to the same
+version before shipment.
+
+2020 November 22
+
+Spent the whole day flailing around and fighting with OpenShot and
+Inkscape to make a demo video.
+
+2020 November 23
+
+Made an Appearance/Outfit Gallery snapshot of the Blobby Man and
+included in the Marketplace listing.  There's no need for every
+customer to fork over L$10 to make their own.
+
+Completed the video, posted to YouTube at:
+    https://www.youtube.com/watch?v=-aE-Ul6D3tE
+and added to the Marketplace listing.
+
+From the video, created an animated GIF of the Jumping Jacks animation
+for the Marketplace.
+    cd ~/w/SecondLife/BlobbyAvatar/videos
+    ffmpeg -ss 122.5 -t 1.3 -filter_complex \
+     "[0:v] fps=12,scale=640:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" \
+     -i Blobby_man_avatar.mp4 -f gif jumping_jacks.gif
+which produces a GIF of 698 Kb, well below the 1 Mb limit for the
+Marketplace.
+
+Rainbow band colours:
+    Red     e40303  <0.894, 0.012, 0.012>
+    Orange  ff8c00  <1, 0.549, 0>
+    Yellow  ffed00  <1, 0.929, 0>
+    Green   008026  <0, 0.502, 0.149>
+    Blue    004dff  <0, 0.302, 1>
+    Violet  750787  <0.459, 0.027, 0.529>
+
+Our forwarding of commands from the primary component to the others ran
+afoul of LSL's "CSV" functions which do not conform to any of the
+commonly-used variants of CSV.  If you encode a string from a list
+which contains one or more commas, they are not quoted in any way and
+will be parsed as separate items when you decode the so-called "CSV".
+This caused commands with a component direction prefix, which we
+separate with commas, to mess up parsing when the command arrives at
+the destination component(s).  I removed the CSV functions and replaced
+them with hard-coded parsing of the string by searching for the comma
+after "COMMAND" and treating the rest of the message as the command.
+
+Revised how direction of commands to components works.  Previously, a
+script command would be forwarded to other components only if it was
+not processed by the primary component.  This meant that it wasn't
+possible to direct a script command to a list of components which
+included the primary component, since its presence in the list would
+suppress forwarding.  You could work around this by including two
+commands: one for the primary component and one for the others, but
+this was far from intuitive and likely to befuddle somebody writing a
+script.
+
+I changed it so that a command from a script which specifies component
+direction and names the component running the script will both cause
+the command to be forwarded and processed within the primary component.
+This took a substantial amount of re-structuring in processCommand()
+which might de-stabilise things, so everything related to this needs
+to be re-tested.
+
+Skin colour palette (dark to light):
+      Hex           RGB             HSV
+    #8d5524     141	85	36      28°	74%	55%
+    #c68642     198	134	66      31°	67%	78%
+    #e0ac69     224	172	105     34°	53%	88%
+    #f1c27d     241	194	125     36°	48%	95%
+    #ffdbac     255	219	172     34°	33%	100%
+Note that colour wheel degrees must be re-mapped into our 0 to 1 hue
+range when declaring colour minimum and maximum values in HSV.
+
+2020 November 24
+
+Revised the Panic command to reset additional modes whose persistence
+may lead to confusion:
+    Polychrome tick length and colour change times
+    Broadcast send and receive modes
+
+2020 November 25
+
+When panic() reset polyTickLength and polyChangeTime, it failed to
+recompute the integer polyChangeTicks which is dependent upon these
+values; fixed.
+
+Silly settings of "Set time" could result in computation of
+polyChangeTicks to end up with zero, which resulted in a zero divide in
+the timer() event handler, which killed all the scripts.  I added code
+to constrain its value to 1 or greater.
+
+Released version 1.0 to the Marketplace.
